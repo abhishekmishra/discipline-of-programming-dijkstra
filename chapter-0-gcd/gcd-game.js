@@ -238,9 +238,9 @@ function startGame(x, y) {
 
 var x = parseInt(getParameterByName('x'));
 var y = parseInt(getParameterByName('y'));
-if (x == null || x > GAME_SIZE.x || y == null || y > GAME_SIZE.y) {
-    alert('x and y must be provided as url params, and must be less than ' + GRID_SIZE.x);
+if (x && y && x <= GAME_SIZE.x && y <= GAME_SIZE.y) {
+    startGame(x, y);
+    var vivus = new Vivus(draw.id(), { duration: 200, start: 'autostart', dashGap: 20, forceRender: false });
+} else {
+    alert('x and y must be provided as url params, and must be less than ' + GAME_SIZE.x);
 }
-startGame(x, y);
-
-var vivus = new Vivus(draw.id(), { duration: 200, start: 'autostart', dashGap: 20, forceRender: false });
