@@ -3,12 +3,23 @@ var PIXELS_PER_UNIT = 20;
 var GRID_SIZE = getGridCoords(GAME_SIZE);
 var MARGIN_SIZE = { x: 100, y: 100 };
 var PEBBLE_SIZE = 8;
+var LINE_SPACE = 1;
 
-var TEXT_AREA = 300;
+var TEXT_AREA = 500;
+var TEXT_HEADER_COLOR = '#f06';
+var TEXT_ANSWER_COLOR = '#00f';
 
-var draw = SVG('drawing').size(GRID_SIZE.x + 2 * MARGIN_SIZE.x + TEXT_AREA, GRID_SIZE.y + 2 * MARGIN_SIZE.y);
+var draw = null;
 
-drawGridLines();
+function getParameterByName(name, url) {
+    if (!url) url = window.location.href;
+    name = name.replace(/[\[\]]/g, "\\$&");
+    var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+        results = regex.exec(url);
+    if (!results) return null;
+    if (!results[2]) return '';
+    return decodeURIComponent(results[2].replace(/\+/g, " "));
+}
 
 function getSvgCoords(gameCoords) {
     var gridCoords = getGridCoords(gameCoords);
@@ -23,6 +34,76 @@ function getGridCoords(gameCoords) {
         x: gameCoords.x * PIXELS_PER_UNIT,
         y: gameCoords.y * PIXELS_PER_UNIT
     }
+}
+
+var currentLine = 0;
+
+function writeGameText() {
+
+    writeText("The GCD Game", { x: GAME_SIZE.x + 2, y: GAME_SIZE.y - currentLine }, TEXT_HEADER_COLOR);
+    currentLine += LINE_SPACE;
+
+    writeText("On a cardboard with grid points, the only numbers written on it are the axis ticks."
+        , { x: GAME_SIZE.x + 2, y: GAME_SIZE.y - currentLine });
+    currentLine += LINE_SPACE;
+
+    writeText("The following straight lines are drawn:-"
+        , { x: GAME_SIZE.x + 2, y: GAME_SIZE.y - currentLine });
+    currentLine += LINE_SPACE;
+
+    writeText("  1. The Vertical Lines with the equation 'x = constant'."
+        , { x: GAME_SIZE.x + 2, y: GAME_SIZE.y - currentLine });
+    currentLine += LINE_SPACE;
+
+    writeText("  2. The Horizontal Lines with the equation 'y = constant'."
+        , { x: GAME_SIZE.x + 2, y: GAME_SIZE.y - currentLine });
+    currentLine += LINE_SPACE;
+
+    writeText("  3. The Diagonal Lines with the equation 'x + y = constant'."
+        , { x: GAME_SIZE.x + 2, y: GAME_SIZE.y - currentLine });
+    currentLine += LINE_SPACE;
+
+    writeText("  4. The Answer Line with the equation 'x = y'."
+        , { x: GAME_SIZE.x + 2, y: GAME_SIZE.y - currentLine });
+    currentLine += LINE_SPACE;
+
+    writeText(""
+        , { x: GAME_SIZE.x + 2, y: GAME_SIZE.y - currentLine });
+    currentLine += LINE_SPACE;
+
+    writeText("Rules of the Game"
+        , { x: GAME_SIZE.x + 2, y: GAME_SIZE.y - currentLine }, TEXT_HEADER_COLOR);
+    currentLine += LINE_SPACE;
+
+    writeText("1. For GCD(x, y), place a pebble (red circle) on (x, y)."
+        , { x: GAME_SIZE.x + 2, y: GAME_SIZE.y - currentLine });
+    currentLine += LINE_SPACE;
+
+    writeText("2. As long as the pebble is not on the answer line, we consider the smallest" +
+        " \nequilateral rectangular triangle with its right angle coninciding with the pebble" +
+        " \nand one sharp angle (either under or to the left of the puzzle) on one of the axes."
+        , { x: GAME_SIZE.x + 2, y: GAME_SIZE.y - currentLine });
+    currentLine += 3 * LINE_SPACE;
+
+    writeText("3. The pebble is then moved to the grid point coinciding with the other sharp" +
+        " \n angle of the triangle."
+        , { x: GAME_SIZE.x + 2, y: GAME_SIZE.y - currentLine });
+    currentLine += 2 * LINE_SPACE;
+
+    writeText("4. This move is repeated till the pebble has not arrived at the answer line." +
+        " \n at which point the answer has been found (the value of x or y)."
+        , { x: GAME_SIZE.x + 2, y: GAME_SIZE.y - currentLine });
+    currentLine += 3 * LINE_SPACE;
+}
+
+function writeText(str, at, color) {
+    if (!color) {
+        color = "#000"
+    }
+    var c = getSvgCoords(at);
+    var text = draw.text(str);
+    text.move(c.x, c.y).font({ fill: color, family: 'Inconsolata' });
+
 }
 
 function drawGridLines() {
@@ -84,16 +165,15 @@ function writeNum(num, at) {
     text.move(c.x, c.y).font({ fill: '#f06', family: 'Inconsolata' });
 }
 
-function playGame(x, y) {
-    var pair = { x: x, y: y };
-
+function playGame(pair) {
     //place pebble
     placePebble(pair);
 
     //if pebble is on answer line, stop
     if (pair.x == pair.y) {
-        //alert(getCoordsToString(pair));
-        return;
+        writeText("The GCD is " + pair.x
+            , { x: GAME_SIZE.x + 2, y: GAME_SIZE.y - currentLine }, TEXT_ANSWER_COLOR);
+        currentLine += LINE_SPACE; return;
     }
 
     //find equilateral right triangle to left or downwards of 
@@ -102,10 +182,10 @@ function playGame(x, y) {
 
     if (pair.x > pair.y) {
         drawEquilateralRightTriangle(pair, { x: pair.x, y: 0 }, { x: pair.x - pair.y, y: pair.y });
-        playGame(pair.x - pair.y, pair.y);
+        playGame({ x: pair.x - pair.y, y: pair.y });
     } else {
         drawEquilateralRightTriangle(pair, { x: 0, y: pair.y }, { x: pair.x, y: pair.y - pair.x });
-        playGame(pair.x, pair.y - pair.x);
+        playGame({ x: pair.x, y: pair.y - pair.x });
     }
 
 }
@@ -117,6 +197,10 @@ function placePebble(at, color) {
     var center = getSvgCoords(at);
     var c = draw.circle(PEBBLE_SIZE).fill(color)
         .move(center.x - PEBBLE_SIZE / 2, center.y - PEBBLE_SIZE / 2);
+
+    writeText("The pebble is at " + getCoordsToString(at)
+        , { x: GAME_SIZE.x + 2, y: GAME_SIZE.y - currentLine });
+    currentLine += LINE_SPACE;
 }
 
 function getCoordsToString(c) {
@@ -136,4 +220,24 @@ function drawEquilateralRightTriangle(x, y, z, color) {
         .fill(color).stroke({ width: 1 });
 }
 
-playGame(28, 7);
+function startGame(x, y) {
+    draw = SVG('drawing').size(GRID_SIZE.x + 2 * MARGIN_SIZE.x + TEXT_AREA, GRID_SIZE.y + 2 * MARGIN_SIZE.y);
+    drawGridLines();
+    currentLine = 0
+    writeGameText();
+
+    writeText("Starting game for GCD(" + x + ", " + y + ")"
+        , { x: GAME_SIZE.x + 2, y: GAME_SIZE.y - currentLine }, TEXT_HEADER_COLOR);
+    currentLine += LINE_SPACE;
+
+    var pair = { x: x, y: y };
+
+    playGame(pair);
+}
+
+var x = getParameterByName('x');
+var y = getParameterByName('y');
+if (x == null || x > GAME_SIZE.x || y == null || y > GAME_SIZE.y) {
+    alert('x and y must be provided as url params, and must be less than ' + GRID_SIZE.x);
+}
+startGame(x, y);
