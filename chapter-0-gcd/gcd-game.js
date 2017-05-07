@@ -103,7 +103,7 @@ function writeText(str, at, color) {
     var c = getSvgCoords(at);
     var text = draw.text(str);
     text.move(c.x, c.y).font({ fill: color, family: 'Inconsolata' });
-
+    return text;
 }
 
 function drawGridLines() {
@@ -166,6 +166,7 @@ function writeNum(num, at) {
 }
 
 function playGame(pair) {
+    //alert(getCoordsToString(pair));
     //place pebble
     placePebble(pair);
 
@@ -224,20 +225,22 @@ function startGame(x, y) {
     draw = SVG('drawing').size(GRID_SIZE.x + 2 * MARGIN_SIZE.x + TEXT_AREA, GRID_SIZE.y + 2 * MARGIN_SIZE.y);
     drawGridLines();
     currentLine = 0
-    writeGameText();
 
     writeText("Starting game for GCD(" + x + ", " + y + ")"
         , { x: GAME_SIZE.x + 2, y: GAME_SIZE.y - currentLine }, TEXT_HEADER_COLOR);
     currentLine += LINE_SPACE;
 
     var pair = { x: x, y: y };
+    writeGameText();
 
     playGame(pair);
 }
 
-var x = getParameterByName('x');
-var y = getParameterByName('y');
+var x = parseInt(getParameterByName('x'));
+var y = parseInt(getParameterByName('y'));
 if (x == null || x > GAME_SIZE.x || y == null || y > GAME_SIZE.y) {
     alert('x and y must be provided as url params, and must be less than ' + GRID_SIZE.x);
 }
 startGame(x, y);
+
+var vivus = new Vivus(draw.id(), { duration: 200, start: 'autostart', dashGap: 20, forceRender: false });
