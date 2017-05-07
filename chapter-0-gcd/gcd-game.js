@@ -226,12 +226,12 @@ function startGame(x, y) {
     drawGridLines();
     currentLine = 0
 
+    var pair = { x: x, y: y };
+    writeGameText();
+
     writeText("Starting game for GCD(" + x + ", " + y + ")"
         , { x: GAME_SIZE.x + 2, y: GAME_SIZE.y - currentLine }, TEXT_HEADER_COLOR);
     currentLine += LINE_SPACE;
-
-    var pair = { x: x, y: y };
-    writeGameText();
 
     playGame(pair);
 }
@@ -240,7 +240,7 @@ var x = parseInt(getParameterByName('x'));
 var y = parseInt(getParameterByName('y'));
 if (x && y && x <= GAME_SIZE.x && y <= GAME_SIZE.y) {
     startGame(x, y);
-    var vivus = new Vivus(draw.id(), { duration: 200, start: 'autostart', dashGap: 20, forceRender: false });
+    var vivus = new Vivus(draw.id(), { duration: 20, start: 'autostart', dashGap: 20, forceRender: false });
 } else {
     alert('x and y must be provided as url params, and must be less than ' + GAME_SIZE.x);
 }
