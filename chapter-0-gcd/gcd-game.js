@@ -11,6 +11,8 @@ var TEXT_ANSWER_COLOR = '#00f';
 
 var draw = null;
 
+// get url parameter, suggested method with least dependencies
+// see http://stackoverflow.com/questions/901115/how-can-i-get-query-string-values-in-javascript
 function getParameterByName(name, url) {
     if (!url) url = window.location.href;
     name = name.replace(/[\[\]]/g, "\\$&");
@@ -21,6 +23,11 @@ function getParameterByName(name, url) {
     return decodeURIComponent(results[2].replace(/\+/g, " "));
 }
 
+/** 
+ * Get svg coordinates from game coordinates
+ * 
+ * the grid is shifted rightwards to allow for some margin.
+ */
 function getSvgCoords(gameCoords) {
     var gridCoords = getGridCoords(gameCoords);
     return {
@@ -29,6 +36,12 @@ function getSvgCoords(gameCoords) {
     }
 }
 
+/**
+ * Get grid coordinates from game coordinates
+ *  
+ * the game coordinates are multiplied by pixels per 
+ * unit to get the grid coords
+ */
 function getGridCoords(gameCoords) {
     return {
         x: gameCoords.x * PIXELS_PER_UNIT,
@@ -38,6 +51,10 @@ function getGridCoords(gameCoords) {
 
 var currentLine = 0;
 
+/**
+ * Writes the game text appearing on the right of the game.
+ * Each time incrementing current line by line spaces.
+ */
 function writeGameText() {
 
     writeText("The GCD Game", { x: GAME_SIZE.x + 2, y: GAME_SIZE.y - currentLine }, TEXT_HEADER_COLOR);
@@ -109,6 +126,9 @@ function writeGameText() {
     currentLine += 5 * LINE_SPACE;
 }
 
+/**
+ * Write text given grid coordinates and color(optional).
+ */
 function writeText(str, at, color) {
     if (!color) {
         color = "#000"
@@ -119,9 +139,11 @@ function writeText(str, at, color) {
     return text;
 }
 
+/**
+ * Draws the grid lines (see game text for details)
+ */
 function drawGridLines() {
-    //the y-axis
-    //var yAxis = drawGridLine({ x: 0, y: 0 }, { x: 0, y: gridSize.y });
+    //write the grid ticks
     for (var i = 1; i <= GAME_SIZE.x; i++) {
         writeNum(i, { x: -1, y: i });
         writeNum(i, { x: i - 0.5, y: 0 });
@@ -133,9 +155,6 @@ function drawGridLines() {
         var to = { x: i, y: GAME_SIZE.y };
         drawGridLine(from, to);
     }
-
-    //the x-axis
-    //var xAxis = drawGridLine({ x: 0, y: 0 }, { x: gridSize.x, y: 0 });
 
     //the y-constant lines
     for (var i = 0; i <= GAME_SIZE.y; i++) {
@@ -162,6 +181,9 @@ function drawGridLines() {
     drawGridLine({ x: 0, y: 0 }, { x: GAME_SIZE.x, y: GAME_SIZE.y }, "#0f0");
 }
 
+/**
+ * General function to draw a line from - to game coords
+ */
 function drawGridLine(from, to, color) {
     if (!color) {
         color = "#000"
@@ -172,12 +194,18 @@ function drawGridLine(from, to, color) {
     return l;
 }
 
+/**
+ * Writes a number at the game coord
+ */
 function writeNum(num, at) {
     var c = getSvgCoords(at);
     var text = draw.text('' + num);
     text.move(c.x, c.y).font({ fill: '#f06', family: 'Inconsolata' });
 }
 
+/**
+ * Recursively play the game, till the answer is found.
+ */
 function playGame(pair) {
     //alert(getCoordsToString(pair));
     //place pebble
@@ -190,20 +218,23 @@ function playGame(pair) {
         currentLine += LINE_SPACE; return;
     }
 
-    //find equilateral right triangle to left or downwards of 
+    //find isoceles right triangle to left or downwards of 
     //pebble such that right angle is on pebble, and one sharp
     //angle is on one of the axes.
 
     if (pair.x > pair.y) {
-        drawEquilateralRightTriangle(pair, { x: pair.x, y: 0 }, { x: pair.x - pair.y, y: pair.y });
+        drawIsocelesRightTriangle(pair, { x: pair.x, y: 0 }, { x: pair.x - pair.y, y: pair.y });
         playGame({ x: pair.x - pair.y, y: pair.y });
     } else {
-        drawEquilateralRightTriangle(pair, { x: 0, y: pair.y }, { x: pair.x, y: pair.y - pair.x });
+        drawIsocelesRightTriangle(pair, { x: 0, y: pair.y }, { x: pair.x, y: pair.y - pair.x });
         playGame({ x: pair.x, y: pair.y - pair.x });
     }
 
 }
 
+/**
+ * Places a pebble(red filled circle) at the game coord
+ */
 function placePebble(at, color) {
     if (!color) {
         color = '#f06';
@@ -217,11 +248,18 @@ function placePebble(at, color) {
     currentLine += LINE_SPACE;
 }
 
+/**
+ * To string for coords
+ */
 function getCoordsToString(c) {
     return c.x + ',' + c.y;
 }
 
-function drawEquilateralRightTriangle(x, y, z, color) {
+/**
+ * Draws an isoceles right triangle with the three vertices, 
+ * and optional color
+ */
+function drawIsocelesRightTriangle(x, y, z, color) {
     var a = getSvgCoords(x);
     var b = getSvgCoords(y);
     var c = getSvgCoords(z);
@@ -234,6 +272,9 @@ function drawEquilateralRightTriangle(x, y, z, color) {
         .fill(color).stroke({ width: 1 });
 }
 
+/**
+ * Start the game using the given x and y
+ */
 function startGame(x, y) {
     draw = SVG('drawing').size(GRID_SIZE.x + 2 * MARGIN_SIZE.x + TEXT_AREA, GRID_SIZE.y + 2 * MARGIN_SIZE.y);
     drawGridLines();
@@ -249,6 +290,10 @@ function startGame(x, y) {
     playGame(pair);
 }
 
+/**
+ * Get x and y from url params and draw the game,
+ * or show an error message.
+ */
 var x = parseInt(getParameterByName('x'));
 var y = parseInt(getParameterByName('y'));
 if (x && y && x <= GAME_SIZE.x && y <= GAME_SIZE.y) {
