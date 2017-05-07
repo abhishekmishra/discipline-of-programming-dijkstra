@@ -17,7 +17,7 @@ title: Abhishek Mishra
 email: abhishekmishra3@gmail.com
 description: > # this means to ignore newlines until "baseurl:"
   A blog about programming
-baseurl: "" # the subpath of your site, e.g. /blog
+baseurl: "/discipline-of-programming-dijkstra" # the subpath of your site, e.g. /blog
 url: "http://abhishekmishra.in" # the base hostname & protocol for your site, e.g. http://example.com
 #twitter_username: jekyllrb
 github_username:  abhishekmishra
