@@ -15,7 +15,7 @@
 # in the templates via {{ site.myvariable }}.
 email: abhishekmishra3@gmail.com
 baseurl: "/discipline-of-programming-dijkstra" # the subpath of your site, e.g. /blog
-url: "http://abhishekmishra.in" # the base hostname & protocol for your site, e.g. http://example.com
+#url: "http://abhishekmishra.in" # the base hostname & protocol for your site, e.g. http://example.com
 #twitter_username: jekyllrb
 github_username:  abhishekmishra
 repository: abhishekmishra/discipline-of-programming-dijkstra
