@@ -5,7 +5,7 @@ var MARGIN_SIZE = { x: 100, y: 100 };
 var PEBBLE_SIZE = 8;
 var LINE_SPACE = 1;
 
-var TEXT_AREA = 500;
+var TEXT_AREA = 400;
 var TEXT_HEADER_COLOR = '#f06';
 var TEXT_ANSWER_COLOR = '#00f';
 
@@ -43,29 +43,34 @@ function writeGameText() {
     writeText("The GCD Game", { x: GAME_SIZE.x + 2, y: GAME_SIZE.y - currentLine }, TEXT_HEADER_COLOR);
     currentLine += LINE_SPACE;
 
-    writeText("On a cardboard with grid points, the only numbers written on it are the axis ticks."
+    writeText("On a cardboard with grid points, the only "
+        + "\nnumbers written on it are the axis ticks."
         , { x: GAME_SIZE.x + 2, y: GAME_SIZE.y - currentLine });
-    currentLine += LINE_SPACE;
+    currentLine += 3 * LINE_SPACE;
 
     writeText("The following straight lines are drawn:-"
         , { x: GAME_SIZE.x + 2, y: GAME_SIZE.y - currentLine });
     currentLine += LINE_SPACE;
 
-    writeText("  1. The Vertical Lines with the equation 'x = constant'."
+    writeText("  1. The Vertical Lines with the" +
+        "\n equation 'x = constant'."
         , { x: GAME_SIZE.x + 2, y: GAME_SIZE.y - currentLine });
-    currentLine += LINE_SPACE;
+    currentLine += 2 * LINE_SPACE;
 
-    writeText("  2. The Horizontal Lines with the equation 'y = constant'."
+    writeText("  2. The Horizontal Lines with the"
+        + "\n equation 'y = constant'."
         , { x: GAME_SIZE.x + 2, y: GAME_SIZE.y - currentLine });
-    currentLine += LINE_SPACE;
+    currentLine += 2 * LINE_SPACE;
 
-    writeText("  3. The Diagonal Lines with the equation 'x + y = constant'."
+    writeText("  3. The Diagonal Lines with the"
+        + "\n equation 'x + y = constant'."
         , { x: GAME_SIZE.x + 2, y: GAME_SIZE.y - currentLine });
-    currentLine += LINE_SPACE;
+    currentLine += 2 * LINE_SPACE;
 
-    writeText("  4. The Answer Line with the equation 'x = y'."
+    writeText("  4. The Answer Line with the "
+        + "equation 'x = y'."
         , { x: GAME_SIZE.x + 2, y: GAME_SIZE.y - currentLine });
-    currentLine += LINE_SPACE;
+    currentLine += 2 * LINE_SPACE;
 
     writeText(""
         , { x: GAME_SIZE.x + 2, y: GAME_SIZE.y - currentLine });
@@ -75,25 +80,33 @@ function writeGameText() {
         , { x: GAME_SIZE.x + 2, y: GAME_SIZE.y - currentLine }, TEXT_HEADER_COLOR);
     currentLine += LINE_SPACE;
 
-    writeText("1. For GCD(x, y), place a pebble (red circle) on (x, y)."
+    writeText("1. For GCD(x, y), place a pebble "
+        + "\n (red circle) on (x, y)."
         , { x: GAME_SIZE.x + 2, y: GAME_SIZE.y - currentLine });
-    currentLine += LINE_SPACE;
+    currentLine += 2*LINE_SPACE;
 
-    writeText("2. As long as the pebble is not on the answer line, we consider the smallest" +
-        " \nequilateral rectangular triangle with its right angle coninciding with the pebble" +
-        " \nand one sharp angle (either under or to the left of the puzzle) on one of the axes."
+    writeText("2. As long as the pebble is not " +
+        " \n on the answer line, we consider " +
+        " \n the smallest isoceles right triangle " +
+        " \n with its right angle coninciding " +
+        " \nwith the pebble and one sharp angle " +
+        " \n(either under or to the left of the " +
+        " \npuzzle) on one of the axes."
+        , { x: GAME_SIZE.x + 2, y: GAME_SIZE.y - currentLine });
+    currentLine += 7 * LINE_SPACE;
+
+    writeText("3. The pebble is then moved to " + 
+        "\nthe grid point coinciding with the " +
+        " \n other sharp angle of the triangle."
         , { x: GAME_SIZE.x + 2, y: GAME_SIZE.y - currentLine });
     currentLine += 3 * LINE_SPACE;
 
-    writeText("3. The pebble is then moved to the grid point coinciding with the other sharp" +
-        " \n angle of the triangle."
+    writeText("4. This move is repeated till the" +
+        " \n  pebble has not arrived at the " +
+        " \n answer line. at which point the answer" +
+        " \n  has been found (the value of x)."
         , { x: GAME_SIZE.x + 2, y: GAME_SIZE.y - currentLine });
-    currentLine += 2 * LINE_SPACE;
-
-    writeText("4. This move is repeated till the pebble has not arrived at the answer line." +
-        " \n at which point the answer has been found (the value of x or y)."
-        , { x: GAME_SIZE.x + 2, y: GAME_SIZE.y - currentLine });
-    currentLine += 3 * LINE_SPACE;
+    currentLine += 5 * LINE_SPACE;
 }
 
 function writeText(str, at, color) {
